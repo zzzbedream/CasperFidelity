@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useClickRef } from '@make-software/csprclick-react';
 import { CONTRACT_HASH, ADMIN_ADDRESS, NETWORK_NAME } from '../config';
 import { DeployUtil, CLPublicKey, CLValueBuilder, RuntimeArgs } from 'casper-js-sdk';
 import { getBalance } from '../utils/casperService';
@@ -11,11 +10,7 @@ const rewards = [
     { id: 3, name: "Free Merchandise", cost: 100, icon: "🎁" }
 ];
 
-const UserView = ({ activeAccount }) => { // Accept prop
-    const { sendDeploy } = useClickRef(); // Keep for signing only
-    // Fallback if prop not passed (legacy)
-    // const { activeAccount: hookAccount } = useClickRef();
-    // const effectiveAccount = activeAccount || hookAccount;
+const UserView = ({ activeAccount }) => {
     const [balance, setBalance] = useState(0);
     const [status, setStatus] = useState('');
 
@@ -82,9 +77,30 @@ const UserView = ({ activeAccount }) => { // Accept prop
             const deploy = DeployUtil.makeDeploy(deployParams, session, payment);
             console.log("Deploy constructed:", deploy);
 
-            // 4. SIGN
+            // 4. SIGN with native Casper Wallet
             const deployJson = DeployUtil.deployToJson(deploy);
-            const { deployHash } = await sendDeploy(deployJson);
+            const signedDeploy = await window.casperlabsSdkBrowserHelper.sign(
+                JSON.stringify(deployJson),
+                activeAccount.public_key
+            );
+
+            // 5. Send to network
+            const deployObject = DeployUtil.deployFromJson(signedDeploy).unwrap();
+            const response = await fetch(`https://node.testnet.casper.network/rpc`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'account_put_deploy',
+                    params: [DeployUtil.deployToJson(deployObject)],
+                    id: 1
+                })
+            });
+
+            const result = await response.json();
+            const deployHash = result.result?.deploy_hash;
+
+            if (!deployHash) throw new Error('Failed to submit deploy');
 
             console.log("SUCCESS! Hash:", deployHash);
             setStatus(`Redemption Sent! Hash: ${deployHash}`);

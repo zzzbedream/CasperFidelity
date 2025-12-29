@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useClickRef } from '@make-software/csprclick-react';
 import { DeployUtil } from 'casper-js-sdk';
 import { CONTRACT_HASH } from '../config';
 import { createIssuePointsDeploy } from '../utils/casperService';
 
 const AdminView = ({ activeAccount }) => {
-    const { sendDeploy } = useClickRef(); // Keep for signing
     const [customerAddr, setCustomerAddr] = useState('');
     const [amount, setAmount] = useState('');
     const [status, setStatus] = useState('');
@@ -25,12 +23,34 @@ const AdminView = ({ activeAccount }) => {
                 amount
             );
 
-            // 2. Convert to JSON for CSPRClick
+            // 2. Convert to JSON for Wallet
             const deployJson = DeployUtil.deployToJson(deploy);
 
-            // 3. Send to Wallet
+            // 3. Sign with native Casper Wallet
             setStatus('Please sign the transaction in your wallet...');
-            const { deployHash } = await sendDeploy(deployJson);
+
+            const signedDeploy = await window.casperlabsSdkBrowserHelper.sign(
+                JSON.stringify(deployJson),
+                activeAccount.public_key
+            );
+
+            // 4. Send to network
+            const deployObject = DeployUtil.deployFromJson(signedDeploy).unwrap();
+            const response = await fetch(`https://node.testnet.casper.network/rpc`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'account_put_deploy',
+                    params: [DeployUtil.deployToJson(deployObject)],
+                    id: 1
+                })
+            });
+
+            const result = await response.json();
+            const deployHash = result.result?.deploy_hash;
+
+            if (!deployHash) throw new Error('Failed to submit deploy');
 
             setStatus(`Transaction sent! Hash: ${deployHash}`);
             alert(`Success! View on Explorer: https://testnet.cspr.live/deploy/${deployHash}`);
