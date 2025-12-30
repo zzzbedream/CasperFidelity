@@ -83,12 +83,12 @@ function App() {
       addLog("Waiting for Casper Wallet extension to load...", "info");
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Direct reference to window.CasperWalletProvider
-      const provider = window.CasperWalletProvider;
+      // Direct reference to window.casperWalletHelper
+      const provider = window.casperWalletHelper;
 
       if (!provider) {
         // Debug: Log all window keys to find the extension
-        console.log("=== DEBUGGING: window.CasperWalletProvider not found ===");
+        console.log("=== DEBUGGING: window.casperWalletHelper not found ===");
         console.log("Searching for Casper Wallet in window object...");
 
         const casperKeys = Object.keys(window).filter(key =>
@@ -102,7 +102,7 @@ function App() {
 
         addLog("Casper Wallet extension not detected!", "error");
         alert(
-          "‚ù?Casper Wallet Not Detected!\n\n" +
+          "‚ùå Casper Wallet Not Detected!\n\n" +
           "Please:\n" +
           "1. Install Casper Wallet from https://www.casperwallet.io/\n" +
           "2. Ensure it's enabled in Edge\n" +
@@ -113,7 +113,7 @@ function App() {
         return;
       }
 
-      addLog("‚ú?Casper Wallet detected! Requesting connection...", "success");
+      addLog("‚úÖ Casper Wallet detected! Requesting connection...", "success");
 
       // Request connection
       const isConnected = await provider.requestConnection();
@@ -136,7 +136,7 @@ function App() {
       await fetchBalance(publicKey);
 
     } catch (error) {
-      console.error("‚ù?Connection error:", error);
+      console.error("‚ùå Connection error:", error);
       addLog(`Connection failed: ${error.message}`, "error");
       alert("Failed to connect wallet:\n\n" + error.message);
     } finally {
@@ -150,8 +150,8 @@ function App() {
     setBalance('0');
     setCSPRBalance('0');
     addLog("Wallet disconnected", "info");
-    if (window.CasperWalletProvider?.disconnectFromSite) {
-      window.CasperWalletProvider.disconnectFromSite();
+    if (window.casperWalletHelper?.disconnectFromSite) {
+      window.casperWalletHelper.disconnectFromSite();
     }
   };
 
@@ -185,7 +185,7 @@ function App() {
       addLog("Waiting for signature from Casper Wallet...", "info");
 
       const deployJson = DeployUtil.deployToJson(deploy);
-      const signedDeployJson = await window.CasperWalletProvider.sign(
+      const signedDeployJson = await window.casperWalletHelper.sign(
         JSON.stringify(deployJson),
         connectedAccount
       );
@@ -195,7 +195,7 @@ function App() {
       const signedDeploy = DeployUtil.deployFromJson(signedDeployJson).unwrap();
       const deployHash = await casperClient.putDeploy(signedDeploy);
 
-      addLog(`‚ú?Transaction SENT to blockchain!`, "success", deployHash);
+      addLog(`‚úÖ Transaction SENT to blockchain!`, "success", deployHash);
       alert(`Success! Points issued.\n\nDeploy Hash: ${deployHash}\n\nView on Explorer: https://testnet.cspr.live/deploy/${deployHash}`);
 
       // Refresh balance after 10 seconds
@@ -203,7 +203,7 @@ function App() {
 
     } catch (error) {
       console.error("Issue points error:", error);
-      addLog(`‚ù?Transaction failed: ${error.message}`, "error");
+      addLog(`‚ùå Transaction failed: ${error.message}`, "error");
       alert("Failed to issue points: " + error.message);
     } finally {
       setLoading(false);
@@ -248,7 +248,7 @@ function App() {
       addLog("Waiting for signature from Casper Wallet...", "info");
 
       const deployJson = DeployUtil.deployToJson(deploy);
-      const signedDeployJson = await window.CasperWalletProvider.sign(
+      const signedDeployJson = await window.casperWalletHelper.sign(
         JSON.stringify(deployJson),
         connectedAccount
       );
@@ -258,14 +258,14 @@ function App() {
       const signedDeploy = DeployUtil.deployFromJson(signedDeployJson).unwrap();
       const deployHash = await casperClient.putDeploy(signedDeploy);
 
-      addLog(`‚ú?Redemption successful! ${rewardName} claimed.`, "success", deployHash);
+      addLog(`‚úÖ Redemption successful! ${rewardName} claimed.`, "success", deployHash);
       alert(`Success! ${rewardName} redeemed.\n\nDeploy Hash: ${deployHash}\n\nView on Explorer: https://testnet.cspr.live/deploy/${deployHash}`);
 
       setTimeout(() => fetchBalance(connectedAccount), 10000);
 
     } catch (error) {
       console.error("Redeem error:", error);
-      addLog(`‚ù?Redemption failed: ${error.message}`, "error");
+      addLog(`‚ùå Redemption failed: ${error.message}`, "error");
       alert("Failed to redeem: " + error.message);
     } finally {
       setLoading(false);
@@ -298,7 +298,7 @@ function App() {
 
           <p className="text-2xl text-blue-100 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
             Blockchain-Powered Loyalty Rewards
-            <br /><span className="text-blue-300 font-medium">Secure ‚Ä?Transparent ‚Ä?Instant</span>
+            <br /><span className="text-blue-300 font-medium">Secure ‚Ä¢ Transparent ‚Ä¢ Instant</span>
           </p>
 
           <button
@@ -415,7 +415,7 @@ const BlockchainTerminal = ({ logs }) => (
         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
         <div className="w-3 h-3 rounded-full bg-green-500"></div>
       </div>
-      <span className="text-slate-500 text-xs ml-2">CasperFidelity Node Terminal ‚Ä?LIVE</span>
+      <span className="text-slate-500 text-xs ml-2">CasperFidelity Node Terminal ‚Ä¢ LIVE</span>
     </div>
 
     <div className="space-y-2 h-40 overflow-y-auto">
@@ -436,7 +436,7 @@ const BlockchainTerminal = ({ logs }) => (
                 rel="noreferrer"
                 className="text-yellow-500 hover:underline break-all text-xs"
               >
-                {log.hash} ‚Ü?
+                {log.hash} ‚Üó
               </a>
             </div>
           )}
@@ -515,8 +515,8 @@ const AdminView = ({ onIssue, logs, loading }) => {
 // =============== USER VIEW ===============
 const UserView = ({ balance, onRedeem, logs, loading }) => {
   const rewards = [
-    { id: 1, name: "Premium Coffee", cost: 10, icon: "‚ò?, description: "Enjoy a free premium coffee" },
-    { id: 2, name: "20% Discount", cost: 50, icon: "üè∑Ô∏?, description: "Get 20% off your next purchase" },
+    { id: 1, name: "Premium Coffee", cost: 10, icon: "‚òï", description: "Enjoy a free premium coffee" },
+    { id: 2, name: "20% Discount", cost: 50, icon: "üè∑Ô∏è", description: "Get 20% off your next purchase" },
     { id: 3, name: "Free Merchandise", cost: 100, icon: "üéÅ", description: "Claim exclusive branded merchandise" }
   ];
 
