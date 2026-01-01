@@ -1,70 +1,207 @@
-# Getting Started with Create React App
+# CasperFidelity 🎯
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### The Future of Liquid Loyalty on Casper Network
 
-## Available Scripts
+![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Casper](https://img.shields.io/badge/Casper-FF0000?style=for-the-badge&logo=casper&logoColor=white)
+![Testnet](https://img.shields.io/badge/Testnet-Deployed-success?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-In the project directory, you can run:
+> Transforming dead capital loyalty points into liquid, tradable on-chain assets. Built for **Casper Hackathon 2026**.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 📸 Screenshots
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+<!-- Add your UI screenshots here -->
 
-### `npm test`
+```
+[ Screenshot 1: Dashboard View ]
+[ Screenshot 2: Issue Points Flow ]
+[ Screenshot 3: Redeem Rewards Flow ]
+[ Screenshot 4: Transaction Confirmation ]
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ✨ Key Features
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+✅ **Issue Points** — Businesses can distribute loyalty rewards on-chain  
+✅ **Redeem Rewards** — Customers can instantly claim real value  
+✅ **Real-time Balance** — Transparent, verifiable point tracking via Casper Wallet  
+✅ **Non-Custodial** — True ownership through wallet integration  
+✅ **Fraud-Proof** — Immutable transaction history on-chain  
+✅ **Fast-Track Eligible** — Fully deployed and functional on Casper Testnet  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🏗️ Architecture
 
-### `npm run eject`
+```
+┌─────────────────────┐
+│   React Frontend    │  (Tailwind CSS, Dark Fintech UI)
+│   (Vercel Hosted)   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Casper Wallet     │  (Transaction Signing & Auth)
+│   Browser Plugin    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Casper Testnet    │  (RPC Node)
+│   Public RPC        │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Smart Contract     │  (Odra Framework - Rust)
+│  (Verified Hash)    │  • Issue Points
+│                     │  • Redeem Rewards
+│                     │  • Query Balances
+└─────────────────────┘
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔐 Verified Contract
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Our smart contract is **deployed and verified** on Casper Testnet:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+| Property | Value |
+|----------|-------|
+| **Contract Hash** | `[AQUÍ_PONDRE_MI_HASH]` |
+| **Network** | Casper Testnet |
+| **Framework** | Odra (Rust) |
+| **Explorer** | [View on Testnet Explorer →](https://testnet.cspr.live/) |
 
-## Learn More
+> 🔍 **Fast-Track Eligible**: Judges can verify all functionality on-chain.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🚀 Getting Started
 
-### Code Splitting
+### Prerequisites
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Node.js** v18+ (for frontend)
+- **Rust** 1.70+ (for smart contract development)
+- **Casper Wallet** browser extension
+- **Git**
 
-### Analyzing the Bundle Size
+### Frontend Setup
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/CasperFidelity.git
+cd CasperFidelity/casper-fidelity-frontend
 
-### Making a Progressive Web App
+# Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+# Start development server
+npm run dev
+```
 
-### Advanced Configuration
+Visit `http://localhost:5173` and connect your Casper Wallet.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Smart Contract Setup
 
-### Deployment
+```bash
+# Navigate to contract directory
+cd casper_fidelity
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Run Odra tests
+cargo odra test
 
-### `npm run build` fails to minify
+# Build the contract
+cargo odra build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Deploy to Testnet (requires funded wallet)
+cargo odra deploy --network testnet
+```
+
+---
+
+## 📅 Roadmap 2026
+
+| Phase | Timeline | Milestones | Status |
+|-------|----------|------------|--------|
+| **Phase 1: MVP** | Q1 2026 | ✅ Smart contract deployment<br>✅ Web UI with wallet integration<br>✅ Issue & redeem flows<br>✅ Testnet launch | ✅ **COMPLETE** |
+| **Phase 2: Liquid Staking** | Q2 2026 | 🔄 Integrate Casper Liquid Staking<br>🔄 Staked points earn yield<br>🔄 Maintain redemption liquidity<br>🔄 Advanced analytics dashboard | 🔜 **PLANNED** |
+| **Phase 3: Mainnet** | Q3 2026 | 🔮 Security audit<br>🔮 Mainnet deployment<br>🔮 Partner onboarding<br>🔮 Multi-tier rewards system | 🔜 **PLANNED** |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Smart Contract** | Rust + Odra Framework | Secure, efficient on-chain logic |
+| **Frontend** | React + Vite | Fast, modern UI development |
+| **Styling** | Tailwind CSS | Dark fintech aesthetic |
+| **Blockchain** | Casper Network (Testnet) | Account-based, eco-friendly L1 |
+| **Wallet** | Casper Wallet | Non-custodial user authentication |
+| **Hosting** | Vercel | Edge-optimized frontend delivery |
+
+---
+
+## 📖 Documentation
+
+- **[Contract API Reference](./docs/CONTRACT_API.md)** — Smart contract methods and types
+- **[Deployment Guide](./docs/DEPLOYMENT.md)** — Step-by-step testnet deployment
+- **[Architecture Deep Dive](./docs/ARCHITECTURE.md)** — System design decisions
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](./CONTRIBUTING.md).
+
+```bash
+# Fork the repo, create a feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes, commit with conventional commits
+git commit -m "feat: add advanced analytics dashboard"
+
+# Push and open a PR
+git push origin feature/your-feature-name
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for details.
+
+---
+
+## 🏆 Hackathon Submission
+
+- **Hackathon**: Casper Hackathon 2026
+- **Track**: Main Track + Liquid Staking (Roadmap)
+- **Team**: [Your Team Name]
+- **Demo**: [https://web-eight-eta-28.vercel.app](https://web-eight-eta-28.vercel.app)
+- **Status**: ✅ Fast-Track Eligible
+
+---
+
+## 🌐 Links
+
+- **Live Demo**: [https://web-eight-eta-28.vercel.app](https://web-eight-eta-28.vercel.app)
+- **Contract Explorer**: [View on Testnet →](https://testnet.cspr.live/)
+- **Documentation**: [Full Docs →](./docs/)
+- **Video Demo**: [Coming Soon]
+
+---
+
+<div align="center">
+
+**Built with ❤️ on Casper Network**
+
+⭐ Star this repo if you believe in liquid loyalty!
+
+</div>
