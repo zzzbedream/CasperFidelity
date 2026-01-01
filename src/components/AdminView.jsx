@@ -1,108 +1,89 @@
 import React, { useState } from 'react';
-import { DeployUtil } from 'casper-js-sdk';
-import { CONTRACT_HASH } from '../config';
-import { createIssuePointsDeploy } from '../utils/casperService';
 
-const AdminView = ({ activeAccount }) => {
+const AdminView = ({ onIssuePoints, logs, loading }) => {
     const [customerAddr, setCustomerAddr] = useState('');
     const [amount, setAmount] = useState('');
-    const [status, setStatus] = useState('');
 
     const handleIssue = async (e) => {
         e.preventDefault();
-        if (!activeAccount?.public_key) return;
-
-        try {
-            setStatus('Preparing deploy...');
-
-            // 1. Create Deploy Object
-            const deploy = createIssuePointsDeploy(
-                CONTRACT_HASH,
-                activeAccount.public_key,
-                customerAddr,
-                amount
-            );
-
-            // 2. Convert to JSON for Wallet
-            const deployJson = DeployUtil.deployToJson(deploy);
-
-            // 3. Sign with native Casper Wallet
-            setStatus('Please sign the transaction in your wallet...');
-
-            const signedDeploy = await window.casperlabsSdkBrowserHelper.sign(
-                JSON.stringify(deployJson),
-                activeAccount.public_key
-            );
-
-            // 4. Send to network
-            const deployObject = DeployUtil.deployFromJson(signedDeploy).unwrap();
-            const response = await fetch(`https://node.testnet.casper.network/rpc`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    jsonrpc: '2.0',
-                    method: 'account_put_deploy',
-                    params: [DeployUtil.deployToJson(deployObject)],
-                    id: 1
-                })
-            });
-
-            const result = await response.json();
-            const deployHash = result.result?.deploy_hash;
-
-            if (!deployHash) throw new Error('Failed to submit deploy');
-
-            setStatus(`Transaction sent! Hash: ${deployHash}`);
-            alert(`Success! View on Explorer: https://testnet.cspr.live/deploy/${deployHash}`);
-
-            // Clear form
-            setCustomerAddr('');
-            setAmount('');
-
-        } catch (err) {
-            console.error(err);
-            setStatus('Error: ' + err.message);
-            alert('Error issuing points: ' + err.message);
+        if (!customerAddr || !amount) {
+            alert('Please enter customer address and amount');
+            return;
         }
+        await onIssuePoints(customerAddr, parseInt(amount));
+        setCustomerAddr('');
+        setAmount('');
     };
 
     return (
-        <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 p-6">
-            <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-4">Admin Dashboard</div>
-            <h1 className="text-2xl font-bold mb-6 text-gray-900">Issue Loyalty Points</h1>
+        <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-slate-600 transition-colors">
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="bg-green-900/30 w-12 h-12 rounded-lg flex items-center justify-center text-green-400 text-2xl">💰</div>
+                    <div>
+                        <h3 className="text-xl font-bold">Issue Points</h3>
+                        <p className="text-gray-400 text-sm">Send CFT tokens to any user</p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => {
+                        setCustomerAddr("0203406c56d6f200a7c757b23447aa3f68e3c41d6555f18ff307fe87fe55c4259b0f");
+                        setAmount("10");
+                    }}
+                    className="text-xs bg-slate-700 hover:bg-slate-600 text-blue-300 px-3 py-1 rounded-lg border border-slate-600 transition-colors"
+                >
+                    ⚡ Quick Test: 10 CFT
+                </button>
+            </div>
 
             <form onSubmit={handleIssue} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Customer Address (Public Key)</label>
+                    <label className="block text-gray-400 text-xs font-bold mb-2 uppercase">Customer Address</label>
                     <input
                         type="text"
                         value={customerAddr}
                         onChange={(e) => setCustomerAddr(e.target.value)}
-                        placeholder="01..."
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                        placeholder="Public Key (01...)"
+                        className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl py-3 px-4 focus:outline-none focus:border-blue-500 font-mono text-sm"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Amount</label>
+                    <label className="block text-gray-400 text-xs font-bold mb-2 uppercase">Amount (CFT)</label>
                     <input
                         type="number"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         placeholder="100"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                        className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl py-3 px-4 focus:outline-none focus:border-blue-500 font-bold"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    disabled={loading}
+                    className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Issue Points
+                    {loading ? "Processing..." : "Issue Points"}
                 </button>
             </form>
 
-            {status && <div className="mt-4 text-sm text-gray-600">{status}</div>}
+            {logs && logs.length > 0 && (
+                <div className="mt-6 border-t border-slate-700 pt-4">
+                    <p className="text-xs text-gray-500 mb-2 font-bold uppercase">Activity Log</p>
+                    <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                        {logs.slice(0, 3).map((log, idx) => (
+                            <div key={idx} className={`text-xs p-2 rounded border ${log.type === 'error' ? 'bg-red-900/20 border-red-900/50 text-red-300' :
+                                log.type === 'success' ? 'bg-green-900/20 border-green-900/50 text-green-300' :
+                                    'bg-slate-900 border-slate-700 text-gray-400'
+                                }`}>
+                                <span className="opacity-50 text-[10px] mr-2">{log.time}</span>
+                                {log.msg}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
