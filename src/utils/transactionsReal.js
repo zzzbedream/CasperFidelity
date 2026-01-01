@@ -127,12 +127,17 @@ export async function issuePointsReal(recipient, amount, connectedAccount, walle
 
 export async function redeemRewardReal(rewardName, cost, connectedAccount, walletProvider, addLog) {
     try {
+        console.log("🎁 [REDEEM 1/6] Starting redemption:", { rewardName, cost, connectedAccount });
+        addLog(`📝 Preparing redeem for ${rewardName} (${cost} CFT)...`, "info");
+
         const senderKey = CLPublicKey.fromHex(connectedAccount);
         const adminPubKey = CLPublicKey.fromHex(ADMIN_ADDRESS);
 
         const contractHashBytes = Uint8Array.from(
             CONTRACT_HASH.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
         );
+
+        console.log("🎁 [REDEEM 2/6] Creating deploy...");
 
         const args = RuntimeArgs.fromMap({
             "recipient": CLValueBuilder.key(adminPubKey),
@@ -150,6 +155,7 @@ export async function redeemRewardReal(rewardName, cost, connectedAccount, walle
         );
 
         const deployJson = DeployUtil.deployToJson(deploy);
+        console.log("🎁 [REDEEM 3/6] Deploy created, requesting signature...");
 
         addLog("🔏 Requesting signature...", "info");
         const response = await walletProvider.sign(JSON.stringify(deployJson), connectedAccount);
@@ -158,9 +164,15 @@ export async function redeemRewardReal(rewardName, cost, connectedAccount, walle
             throw new Error("❌ Cancelado");
         }
 
+        console.log("🎁 [REDEEM 4/6] Signature received:", response);
+
         let signatureHex = response.signatureHex || response.signature;
         if (!signatureHex && response.deploy?.approvals?.[0]?.signature) {
             signatureHex = response.deploy.approvals[0].signature;
+        }
+
+        if (!signatureHex) {
+            throw new Error("No signature found");
         }
 
         let signatureBytes;
@@ -186,6 +198,10 @@ export async function redeemRewardReal(rewardName, cost, connectedAccount, walle
             }
         };
 
+        console.log("🎁 [REDEEM 5/6] Sending to RPC...");
+        console.log("📋 Full RPC Body:", JSON.stringify(rpcBody, null, 2));
+        addLog("📡 Sending deploy to network...", "info");
+
         const rpcUrl = window.location.origin + NODE_URL;
         const res = await fetch(rpcUrl, {
             method: 'POST',
@@ -194,12 +210,15 @@ export async function redeemRewardReal(rewardName, cost, connectedAccount, walle
         });
 
         const data = await res.json();
+        console.log("🎁 [REDEEM 6/6] RPC Response:", JSON.stringify(data, null, 2));
 
         if (data.error) {
+            console.error("❌ RPC Error Full Details:", JSON.stringify(data.error, null, 2));
             throw new Error(`RPC Error ${data.error.code}: ${data.error.message}`);
         }
 
         const deployHash = data.result.deploy_hash;
+        console.log("🏆 [REDEEM SUCCESS] Hash:", deployHash);
         addLog(`✅ Redeemed!`, "success", deployHash);
 
         const { updateBalance } = await import('./localBalanceTracker');
@@ -212,6 +231,8 @@ export async function redeemRewardReal(rewardName, cost, connectedAccount, walle
         };
 
     } catch (error) {
+        console.error("❌ Redeem Error:", error);
+        addLog(`❌ Redemption failed: ${error.message}`, "error");
         throw new Error(`Redemption failed: ${error.message}`);
     }
 }
