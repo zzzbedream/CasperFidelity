@@ -31,3 +31,26 @@ yarn-error.log*
 .vercel
 
 .vercel
+
+# ===== SECURITY: NEVER COMMIT THESE FILES =====
+# Private Keys & Secrets
+*.pem
+*.key
+*_key*
+*secret*
+keys/
+wallet*.pem
+admin*.pem
+
+# Testnet/Mainnet Specific
+*public_key.txt
+*public_key_hex.txt
+*_pubkey.txt
+seed.txt
+
+# Contract Build Artifacts
+contract/target/
+contract/wasm/
+contract/.odra/
+contract/Cargo.lock
+contract/node_modules/

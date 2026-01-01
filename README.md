@@ -84,6 +84,22 @@ Our smart contract is **deployed and verified** on Casper Testnet:
 
 ## 🚀 Getting Started
 
+### Repository Structure
+
+```
+CasperFidelity/
+├── contract/              # Smart Contract (Rust + Odra)
+│   ├── src/
+│   │   └── lib.rs        # Main contract logic
+│   ├── Cargo.toml        # Rust dependencies
+│   ├── Odra.toml         # Odra configuration
+│   └── README.md         # Contract documentation
+├── src/                   # React Frontend
+├── public/                # Static assets
+├── README.md              # This file
+└── SUBMISSION.md          # Hackathon submission text
+```
+
 ### Prerequisites
 
 - **Node.js** v18+ (for frontend)
@@ -111,7 +127,7 @@ Visit `http://localhost:5173` and connect your Casper Wallet.
 
 ```bash
 # Navigate to contract directory
-cd casper_fidelity
+cd contract
 
 # Run Odra tests
 cargo odra test
