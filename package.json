@@ -49,5 +49,13 @@
   "devDependencies": {
     "http-proxy-middleware": "^3.0.5"
   },
-  "proxy": "https://node.testnet.casper.network"
+  "proxy": {
+    "/api/rpc": {
+      "target": "https://node.testnet.casper.network/rpc",
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api/rpc": ""
+      }
+    }
+  }
 }

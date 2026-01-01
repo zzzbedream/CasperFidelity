@@ -91,6 +91,8 @@ export async function issuePointsReal(recipient, amount, connectedAccount, walle
         };
 
         addLog("📡 Sending deploy to Casper Network...", "info");
+
+        // Use NODE_URL directly (already has full URL in production, relative in dev)
         const rpcUrl = window.location.origin + NODE_URL;
 
         const res = await fetch(rpcUrl, {
